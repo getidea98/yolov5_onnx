@@ -3,6 +3,7 @@ import time
 from threading import Thread
 
 import directkeys
+from RiskManagement import RiskManagement
 from Strategy import Strategy, auto_come_hbl
 import torch
 import random
@@ -59,7 +60,6 @@ class Detect:
         classes = self.global_info.get_classes()
         agnostic_nms = self.global_info.get_agnostic_nms()
         max_det = self.global_info.get_max_det()
-        strategy = Strategy(self.global_info)
         if self.global_info.configYaml.celia_into_door():
             log.info('已开启celia_into_door参数，正在从赛利亚房间进入地下城')
             auto_come_hbl()  # 从赛利亚房间进入地下城
@@ -70,6 +70,13 @@ class Detect:
             time.sleep(1)
             directkeys.key_press('2')
             log.info('已开启celia_into_door参数，已进入地下城，已吃药触发大天域效果')
+
+        rm = RiskManagement()
+        t2 = Thread(target=rm.run)
+        t2.start()
+        self.global_info.rm = rm
+
+        strategy = Strategy(self.global_info)
         t1 = Thread(target=strategy.run)
         t1.start()
         for _, im, im0s, _, _ in dataset:
