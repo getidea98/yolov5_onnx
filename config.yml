@@ -8,6 +8,14 @@ skills_list:
   - u
   - u_q_w_e_s_r_f
 
+priority_room:
+  -
+  - RIGHT # 第一个：优先向进入右边房间
+  - RIGHT # 第二个：优先向进入右边房间
+  - UP    # 第三个：优先向进入右边房间
+  - UP    # 第四个：优先向进入右边房间
+  - RIGHT # 第五个：优先向进入右边房间
+
 # 权重文件的路径
 weights: weights/20230202/best.pt
 # 被检测对象
