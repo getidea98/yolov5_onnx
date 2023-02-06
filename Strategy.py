@@ -111,6 +111,7 @@ class Strategy:
                 # 继续下个地下城
                 if "options" in cls_object:
                     self.select_next_time()
+                    return
 
                 if hero_index == -1:
                     # 没找到角色
@@ -239,7 +240,7 @@ class Strategy:
                 door_box = box
                 door_box[1] += 60
         # 门的位置在屏幕的左边偏下
-        if door_box[0] < im0.shape[0] * 0.3 and door_box[1] > im0.shape[1] * 0.2:
+        if door_box[0] < im0.shape[0] * 0.1 and door_box[1] > im0.shape[1] * 0.2:
             log.info('房间号:{}, 当前按键:{}, 顺图:门的位置小于抓取的一半，在左侧不符合顺图要求,向RIGHT_UP移动'.format(
                 self.door_index, self.action_cache))
             self.action_cache = move(direct="RIGHT_UP", action_cache=self.action_cache,
@@ -338,12 +339,13 @@ class Strategy:
             # 继续
             directkeys.key_press(self.next_door)
             log.info('next_door:重新开始F1')
+            #
             # 技能释放顺序，重新初始化
             self.skills_list = self.skills_list_origin.copy()
             self.pre_press_next_time = time.time()
         else:
-            log.info('next_door:间隔时间短跳过处理,并暂停4S')
-            time.sleep(4)
+            log.info('next_door:间隔时间短跳过处理,并暂停6S')
+        time.sleep(6)
 
     # 捡材料
     def material_money(self, hero_xywh, cls_object, img_object):
