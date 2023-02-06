@@ -234,7 +234,7 @@ class Strategy:
 
     # 进入下一个房间
     def move_next_door(self, im0, hero_xywh, cls_object, img_object):
-        log.info('房间号:{}, 当前按键:{}, 顺图:进入下个房间'.format(self.door_index, self.action_cache))
+        log.info('房间号:{}, 当前按键:{}, 顺图:准备进入下个房间'.format(self.door_index, self.action_cache))
         door_box = None
         direct = None
         for idx, (c, box) in enumerate(zip(cls_object, img_object)):
@@ -293,12 +293,14 @@ class Strategy:
             elif door_box[1] - hero_xywh[1] >= door_box[0] - hero_xywh[0]:
                 direct = "DOWN"
         if direct is not None:
-            log.info('房间号:{}, 当前按键:{}, 顺图:进入下一房间:{}'.format(self.door_index, self.action_cache, direct))
+            log.info('房间号:{}, 当前按键:{}, 顺图:进入下一房间:{} hero_xywh {} {} {} {}, door_box {} {} {} {}'.
+                     format(self.door_index, self.action_cache, direct, hero_xywh[0], hero_xywh[1], hero_xywh[2],
+                            hero_xywh[3], door_box[0], door_box[1], door_box[2], door_box[3]))
             self.action_cache = move(direct=direct, action_cache=self.action_cache,
                                      press_delay=self.press_delay,
                                      release_delay=self.release_delay)
         else:
-            log.info('房间号:{}, 当前按键:{}, 顺图:方向计算失败hero_xywh {} {} {} {}, door_box {} {} {} {}'.
+            log.info('房间号:{}, 当前按键:{}, 顺图:方向计算失败 hero_xywh {} {} {} {}, door_box {} {} {} {}'.
                      format(self.door_index, self.action_cache, hero_xywh[0], hero_xywh[1], hero_xywh[2], hero_xywh[3],
                             door_box[0], door_box[1], door_box[2], door_box[3]))
             time.sleep(0.5)
