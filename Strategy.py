@@ -44,7 +44,7 @@ class Strategy:
         self.move_material = str(self.info.get_move_material())
 
         self.thx = 30  # 捡东西时，x方向的阈值
-        self.thy = 30  # 捡东西时，y方向的阈值
+        self.thy = 28  # 捡东西时，y方向的阈值
         self.attx = 150  # 攻击时，x方向的阈值
         self.atty = 50  # 攻击时，y方向的阈值
 
@@ -315,6 +315,9 @@ class Strategy:
             self.action_cache = move(direct=direct, action_cache=self.action_cache,
                                      press_delay=self.press_delay,
                                      release_delay=self.release_delay)
+        else:
+            log.info('房间号:{}, 当前按键:{}, 顺图:方向计算失败hero_xywh {} {} {} {}, door_box {} {} {} {}'.
+                     format(self.door_index, self.action_cache, hero_xywh[0], hero_xywh[1], hero_xywh[2], hero_xywh[3], door_box[0], door_box[1], door_box[2], door_box[3]))
             time.sleep(0.5)
 
     # 没有检测到其他标签
