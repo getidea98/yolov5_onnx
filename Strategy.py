@@ -130,7 +130,7 @@ class Strategy:
                 # 移动到下一个地图
                 if "door" in cls_object and "monster" not in cls_object and "material" not in cls_object \
                         and "money" not in cls_object:
-                    self.move_next_door(im0, hero_xywh, cls_object, img_object)
+                    self.move_next_door(hero_xywh, cls_object, img_object)
 
                 # 在第一个房间上buff
                 if self.door_index == 0 and time.time() - self.door1_time_start > 10:
@@ -226,7 +226,9 @@ class Strategy:
                                      release_delay=self.release_delay)
 
     # 进入下一个房间
-    def move_next_door(self, im0, hero_xywh, cls_object, img_object):
+    def move_next_door(self, hero_xywh, cls_object, img_object):
+
+        # todo 增加顺图优先级
         door_box = None
         direct = None
         for idx, (c, box) in enumerate(zip(cls_object, img_object)):
@@ -300,7 +302,7 @@ class Strategy:
     # 没有检测到其他标签
     def nothing(self):
         # 减少频率，目的是避免检测准确率不高导致影响顺图和捡材料
-        if time.time() - self.pre_nothing_move_time > 2:
+        if time.time() - self.pre_nothing_move_time > 1:
             log.info('房间号:{}, 当前按键:{}, 没有检测到其他标签, 向{}移动'
                      .format(self.door_index, self.action_cache, 'RIGHT_UP'))
             self.action_cache = move(direct='RIGHT_UP', action_cache=self.action_cache,
@@ -331,17 +333,16 @@ class Strategy:
     def select_next_time(self):
         if time.time() - self.pre_press_next_time > 10:
             self.release_action_cache()
+            log.info('next_door:移动物品到脚下')
+            directkeys.key_press("X", random.uniform(2, 4))
+            time.sleep(1)
             directkeys.key_press('ESC')
             log.info('按下ESC取消加百利或德利拉')
             time.sleep(1)
             directkeys.key_press(self.move_material)
-            time.sleep(1)
-            log.info('next_door:移动物品到脚下')
-            directkeys.key_press("X", random.uniform(2, 4))
             # 继续
             directkeys.key_press(self.next_door)
             log.info('next_door:重新开始F1')
-            #
             # 技能释放顺序，重新初始化
             self.skills_list = self.skills_list_origin.copy()
             self.pre_press_next_time = time.time()
