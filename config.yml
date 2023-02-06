@@ -1,0 +1,24 @@
+# 顺图过程中的技能释放顺序
+skills_list:
+  -
+  - q
+  - w
+  - e
+  - f
+  - u
+  - u_q_w_e_s_r_f
+
+# 权重文件的路径
+weights: weights/20230202/best.pt
+# 被检测对象
+source: screen
+#使用设备
+device: cpu
+#是否试试展示
+view_img: True
+# 游戏内，移动物品快捷键
+move_material: P
+# 游戏内，继续下一关快捷键
+next_door: F1
+# 开启从赛丽亚进入地下城
+celia_into_door: True
