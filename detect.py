@@ -60,7 +60,7 @@ class Detect:
         agnostic_nms = self.global_info.get_agnostic_nms()
         max_det = self.global_info.get_max_det()
         strategy = Strategy(self.global_info)
-        if self.global_info.configYaml.celia_into_door:
+        if self.global_info.configYaml.celia_into_door():
             log.info('已开启celia_into_door参数，正在从赛利亚房间进入地下城')
             auto_come_hbl()  # 从赛利亚房间进入地下城
             time.sleep(1)
