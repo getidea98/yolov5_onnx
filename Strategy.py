@@ -44,13 +44,13 @@ class Strategy:
         self.next_door = str(self.info.get_next_door())
         self.move_material = str(self.info.get_move_material())
 
-        self.thx = 30  # 捡东西时，x方向的阈值
-        self.thy = 28  # 捡东西时，y方向的阈值
+        self.thx = 44  # 捡东西时，x方向的阈值
+        self.thy = 20  # 捡东西时，y方向的阈值
         self.attx = 150  # 攻击时，x方向的阈值
         self.atty = 50  # 攻击时，y方向的阈值
 
         # 加载技能释放顺序
-        self.skills_list_origin = self.info.skills_list
+        self.skills_list_origin = self.info.skills_list()
         self.skills_list = self.skills_list_origin.copy()
 
         self.colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(self.names))]
@@ -80,11 +80,6 @@ class Strategy:
     def run(self):
         while True:
             try:
-                self.thx = 44  # 捡东西时，x方向的阈值
-                self.thy = 30  # 捡东西时，y方向的阈值
-                self.attx = 150  # 攻击时，x方向的阈值
-                self.atty = 50  # 攻击时，y方向的阈值
-
                 im0 = self.im0s.copy()
 
                 # 推来出来的标签位置
@@ -357,8 +352,8 @@ class Strategy:
         min_distance = float("inf")
         material_box = None
         hero_xywh[1] = hero_xywh[1] + (hero_xywh[3] // 2) * 0.7
-        self.thx = self.thx / 2
-        self.thy = self.thy / 2
+        thx0 = self.thx / 2
+        thy0 = self.thy / 2
         log.info('房间号:{}, 当前按键:{},  捡材料:寻找最进的材料'.format(self.door_index, self.action_cache))
         for idx, (c, box) in enumerate(zip(cls_object, img_object)):
             if c == 'material' or c == "money":
@@ -367,35 +362,35 @@ class Strategy:
                     material_box = box
                     min_distance = dis
         direct = None
-        if abs(material_box[0] - hero_xywh[0]) < self.thx and abs(material_box[1] - hero_xywh[1]) < self.thy:
+        if abs(material_box[0] - hero_xywh[0]) < thx0 and abs(material_box[1] - hero_xywh[1]) < thy0:
             self.release_action_cache()
             time.sleep(1)
             directkeys.key_press("X")
             log.info("房间号:{}, 当前按键:{}, 捡材料:捡材料".format(self.door_index, self.action_cache))
             # break
         elif material_box[1] - hero_xywh[1] < 0 < material_box[0] - hero_xywh[0]:
-            if abs(material_box[1] - hero_xywh[1]) < self.thy:
+            if abs(material_box[1] - hero_xywh[1]) < thy0:
                 direct = 'RIGHT'
             elif hero_xywh[1] - material_box[1] < material_box[0] - hero_xywh[0]:
                 direct = 'RIGHT_UP'
             elif hero_xywh[1] - material_box[1] >= material_box[0] - hero_xywh[0]:
                 direct = 'UP'
         elif material_box[1] - hero_xywh[1] < 0 and material_box[0] - hero_xywh[0] < 0:
-            if abs(material_box[1] - hero_xywh[1]) < self.thy:
+            if abs(material_box[1] - hero_xywh[1]) < thy0:
                 direct = 'LEFT'
             elif hero_xywh[1] - material_box[1] < hero_xywh[0] - material_box[0]:
                 direct = 'LEFT_UP'
             elif hero_xywh[1] - material_box[1] >= hero_xywh[0] - material_box[0]:
                 direct = 'UP'
         elif material_box[1] - hero_xywh[1] > 0 > material_box[0] - hero_xywh[0]:
-            if abs(material_box[1] - hero_xywh[1]) < self.thy:
+            if abs(material_box[1] - hero_xywh[1]) < thy0:
                 direct = 'LEFT'
             elif material_box[1] - hero_xywh[1] < hero_xywh[0] - material_box[0]:
                 direct = 'LEFT_DOWN'
             elif material_box[1] - hero_xywh[1] >= hero_xywh[0] - material_box[0]:
                 direct = 'DOWN'
         elif material_box[1] - hero_xywh[1] > 0 and material_box[0] - hero_xywh[0] > 0:
-            if abs(material_box[1] - hero_xywh[1]) < self.thy:
+            if abs(material_box[1] - hero_xywh[1]) < thy0:
                 direct = 'RIGHT'
             elif material_box[1] - hero_xywh[1] < material_box[0] - hero_xywh[0]:
                 direct = 'RIGHT_DOWN'
