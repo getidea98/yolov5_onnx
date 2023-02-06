@@ -341,22 +341,24 @@ class Strategy:
 
     #  选择继续通关
     def select_next_time(self):
+        if time.time() - self.pre_press_next_time > 10:
+            self.release_action_cache()
+            directkeys.key_press('ESC')
+            log.info('按下ESC取消加百利或德利拉')
+            time.sleep(1)
+            directkeys.key_press(self.move_material)
+            time.sleep(1)
+            log.info('next_door:移动物品到脚下')
+            directkeys.key_press("X", 3)
+            # 继续
+            directkeys.key_press(self.next_door)
+            log.info('next_door:重新开始F1')
+            # 技能释放顺序，重新初始化
+            self.skills_list = self.skills_list_origin.copy()
+            self.pre_press_next_time = time.time()
+        else:
+            log.info('next_door:间隔时间短跳过处理')
 
-        self.release_action_cache()
-        directkeys.key_press('ESC')
-        log.info('按下ESC取消加百利或德利拉')
-        time.sleep(1)
-        directkeys.key_press(self.move_material)
-        log.info('next_door:按下移动物品', self.move_material)
-        time.sleep(1)
-        log.info('next_door:移动物品到脚下')
-        directkeys.key_press("X", 3)
-        # 继续
-        self.pre_press_next_time = time.time()
-        directkeys.key_press(self.next_door)
-        log.info('next_door:重新开始F1')
-        # 技能释放顺序，重新初始化
-        self.skills_list = self.skills_list_origin.copy()
 
     # 捡材料
     def material_money(self, hero_xywh, cls_object, img_object):
