@@ -7,6 +7,7 @@ import torch
 import time
 import directkeys
 from directkeys import ReleaseKey
+from skill_recgnize import attack
 from small_recgonize import current_door
 from utils.general import (xyxy2xywh)
 
@@ -111,17 +112,6 @@ class Strategy:
                 if "options" in cls_object:
                     self.select_next_time()
 
-                # BOSS房间召唤,释放全部技能
-                if self.door_index == 6:
-                    if self.pre_door_index == 6:
-                        # 本次和上次检测房间好都是6,则连续数+1
-                        self.consecutive_boss_door += 1
-                    if self.consecutive_boss_door > 20:
-                        # 连续20次都是BOSS房间则释放BOSS技能.目的是修复检测错误时提前释放觉醒
-                        self.current_door_boss(im0)
-                else:
-                    self.consecutive_boss_door = 0
-
                 if hero_index == -1:
                     # 没找到角色
                     self.not_found_role()
@@ -179,19 +169,6 @@ class Strategy:
         time.sleep(1)
         self.action_cache = None
 
-    # 在BOSS房间,需要连续检测
-    def current_door_boss(self, im0):
-        for i in range(20):
-            if current_door(im0) != 6:
-                return
-
-        log.info('当前按键:{}, 在BOSS房间'.format(self.action_cache))
-        if '_' in self.skills_list[6]:
-            skills = self.skills_list[6].strip().split("_")
-            for item in skills:
-                directkeys.key_press(item)
-                time.sleep(1)
-
     # 打怪
     def monster(self, im0, hero_xywh, cls_object, img_object):
         door_index = current_door(im0)
@@ -212,8 +189,9 @@ class Strategy:
                     min_distance = dis
         # 处于攻击距离
         if abs(hero_xywh[0] - monster_box[0]) < self.attx and abs(hero_xywh[1] - monster_box[1]) < self.atty:
-            directkeys.key_press("A")
-            log.info('房间号:{}, 当前按键:{}, 释放技能攻击'.format(self.door_index, self.action_cache))
+            skill_name = attack(im0)
+            directkeys.key_press(skill_name)
+            log.info('房间号:{}, 当前按键:{}, 释放技能攻击{}'.format(self.door_index, self.action_cache, skill_name))
             self.release_action_cache()
             # break
         # 怪物在英雄右上  ， 左上     左下   右下
@@ -262,7 +240,8 @@ class Strategy:
                 door_box[1] += 60
         # 门的位置在屏幕的左边偏下
         if door_box[0] < im0.shape[0] * 0.3 and door_box[1] > im0.shape[1] * 0.2:
-            log.info('房间号:{}, 当前按键:{}, 顺图:门的位置小于抓取的一半，在左侧不符合顺图要求,向RIGHT_UP移动'.format(self.door_index, self.action_cache))
+            log.info('房间号:{}, 当前按键:{}, 顺图:门的位置小于抓取的一半，在左侧不符合顺图要求,向RIGHT_UP移动'.format(
+                self.door_index, self.action_cache))
             self.action_cache = move(direct="RIGHT_UP", action_cache=self.action_cache,
                                      press_delay=self.press_delay,
                                      release_delay=self.release_delay)
@@ -317,19 +296,22 @@ class Strategy:
                                      release_delay=self.release_delay)
         else:
             log.info('房间号:{}, 当前按键:{}, 顺图:方向计算失败hero_xywh {} {} {} {}, door_box {} {} {} {}'.
-                     format(self.door_index, self.action_cache, hero_xywh[0], hero_xywh[1], hero_xywh[2], hero_xywh[3], door_box[0], door_box[1], door_box[2], door_box[3]))
+                     format(self.door_index, self.action_cache, hero_xywh[0], hero_xywh[1], hero_xywh[2], hero_xywh[3],
+                            door_box[0], door_box[1], door_box[2], door_box[3]))
             time.sleep(0.5)
 
     # 没有检测到其他标签
     def nothing(self):
-        log.info('房间号:{}, 当前按键:{}, 没有检测到其他标签, 向{}移动'.format(self.door_index, self.action_cache, self.not_found_role_direct))
+        log.info('房间号:{}, 当前按键:{}, 没有检测到其他标签, 向{}移动'.format(self.door_index, self.action_cache,
+                                                                               self.not_found_role_direct))
         self.action_cache = move(direct='RIGHT_UP', action_cache=self.action_cache,
                                  press_delay=self.press_delay,
                                  release_delay=self.release_delay)
 
     # 没找到人物
     def not_found_role(self):
-        log.info('房间号:{}, 当前按键:{}, 没有检测到人物, 向{}移动'.format(self.door_index, self.action_cache, self.not_found_role_direct))
+        log.info('房间号:{}, 当前按键:{}, 没有检测到人物, 向{}移动'.format(self.door_index, self.action_cache,
+                                                                           self.not_found_role_direct))
         self.action_cache = move(direct=self.not_found_role_direct, action_cache=self.action_cache,
                                  press_delay=self.press_delay,
                                  release_delay=self.release_delay)
@@ -362,7 +344,6 @@ class Strategy:
         else:
             log.info('next_door:间隔时间短跳过处理,并暂停4S')
             time.sleep(4)
-
 
     # 捡材料
     def material_money(self, hero_xywh, cls_object, img_object):
