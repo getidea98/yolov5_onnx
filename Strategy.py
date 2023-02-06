@@ -152,25 +152,23 @@ class Strategy:
 
     # 在第一个房间
     def current_door0(self):
-        self.door1_time_start = time.time()
-        # 开局向右移动一段距离，修复开局卡位置问题
-        move(direct="RIGHT_DOWN", material=True, action_cache=self.action_cache, press_delay=self.release_delay,
-             release_delay=self.release_delay)
-        time.sleep(0.3)
-        self.release_action_cache()
-        directkeys.key_press('H')
-        log.info('房间号:{}, 当前按键:{}, 开启buff').format(self.door_index, self.action_cache)
-        time.sleep(1)
-        directkeys.key_press('T')
-        log.info('房间号:{}, 当前按键:{}, 开启一觉').format(self.door_index, self.action_cache)
-        time.sleep(1)
-        directkeys.key_press('Y')
-        log.info('房间号:{}, 当前按键:{}, 开启二觉').format(self.door_index, self.action_cache)
-        time.sleep(1)
-        directkeys.key_press('U')
-        log.info('房间号:{}, 当前按键:{}, 支配之环').format(self.door_index, self.action_cache)
-        time.sleep(1)
-        self.action_cache = None
+        if time.time() - self.door1_time_start > 10:
+            # 开局向右移动一段距离，修复开局卡位置问题
+            log.info('房间号:{}, 当前按键:RIGHT_DOWN, 开启buff').format(self.door_index)
+            move(direct="RIGHT_DOWN", material=True, action_cache=self.action_cache, press_delay=self.release_delay,
+                 release_delay=self.release_delay)
+            time.sleep(0.3)
+            self.release_action_cache()
+            directkeys.key_press('H')
+            time.sleep(1)
+            directkeys.key_press('T')
+            time.sleep(1)
+            directkeys.key_press('Y')
+            time.sleep(1)
+            directkeys.key_press('U')
+            time.sleep(1)
+            self.action_cache = None
+            self.door1_time_start = time.time()
 
     # 打怪
     def monster(self, im0, hero_xywh, cls_object, img_object):
