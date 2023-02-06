@@ -349,8 +349,6 @@ class Strategy:
             # 技能释放顺序，重新初始化
             self.skills_list = self.skills_list_origin.copy()
             self.pre_press_next_time = time.time()
-        else:
-            log.info('next_door:间隔时间短跳过处理,并暂停6S')
         time.sleep(6)
 
     # 捡材料
