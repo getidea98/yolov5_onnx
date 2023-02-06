@@ -13,9 +13,9 @@ weights: weights/20230202/best.pt
 # 被检测对象
 source: screen
 #使用设备
-device: cpu
+device: dml
 #是否试试展示
-view_img: True
+view_img: False
 # 游戏内，移动物品快捷键
 move_material: P
 # 游戏内，继续下一关快捷键

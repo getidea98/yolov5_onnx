@@ -23,11 +23,10 @@ def main():
     # 解析入参
     global_info = GlobalInfo('config.yml')
     log.info('参数解析完成')
-    # win32 = Win32guiUtil()
+    win32 = Win32guiUtil()
     # 将游戏放在最上层
-    # win32.set_foreground_window()
-    # (global_info.screen_x0, global_info.screen_y0, width, height) = win32.get_window_pos()
-    (global_info.screen_x0, global_info.screen_y0, width, height) = 0, 0, 1920, 1080
+    win32.set_foreground_window()
+    (global_info.screen_x0, global_info.screen_y0, width, height) = win32.get_window_pos()
     log.info('游戏屏幕位置解析完成。top:{} left:{} width:{} height:{}'
              .format(global_info.screen_x0, global_info.screen_y0, width, height))
     # 主屏幕
