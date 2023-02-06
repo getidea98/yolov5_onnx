@@ -360,7 +360,8 @@ class Strategy:
             self.skills_list = self.skills_list_origin.copy()
             self.pre_press_next_time = time.time()
         else:
-            log.info('next_door:间隔时间短跳过处理')
+            log.info('next_door:间隔时间短跳过处理,并暂停4S')
+            time.sleep(4)
 
 
     # 捡材料
