@@ -234,7 +234,6 @@ class Strategy:
 
     # 进入下一个房间
     def move_next_door(self, im0, hero_xywh, cls_object, img_object):
-        log.info('房间号:{}, 当前按键:{}, 顺图:准备进入下个房间'.format(self.door_index, self.action_cache))
         door_box = None
         direct = None
         for idx, (c, box) in enumerate(zip(cls_object, img_object)):
@@ -242,7 +241,7 @@ class Strategy:
                 door_box = box
                 door_box[1] += 60
         # 门的位置在屏幕的左边偏下
-        if door_box[0] < im0.shape[0] * 0.1 and door_box[1] > im0.shape[1] * 0.2:
+        if door_box[0] < im0.shape[0] * 0.1 and door_box[1] > im0.shape[1] * 0.6:
             log.info('房间号:{}, 当前按键:{}, 顺图:门的位置小于抓取的一半，在左侧不符合顺图要求,向RIGHT_UP移动'.format(
                 self.door_index, self.action_cache))
             self.action_cache = move(direct="RIGHT_UP", action_cache=self.action_cache,
