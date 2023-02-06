@@ -50,7 +50,7 @@ class Strategy:
         self.atty = 50  # 攻击时，y方向的阈值
 
         # 加载技能释放顺序
-        self.skills_list_origin = self.info.skills_list()
+        self.skills_list_origin = self.info.skills_list
         self.skills_list = self.skills_list_origin.copy()
 
         self.colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(self.names))]
@@ -337,7 +337,7 @@ class Strategy:
             directkeys.key_press(self.move_material)
             time.sleep(1)
             log.info('next_door:移动物品到脚下')
-            directkeys.key_press("X", 3)
+            directkeys.key_press("X", random.uniform(2, 4))
             # 继续
             directkeys.key_press(self.next_door)
             log.info('next_door:重新开始F1')
