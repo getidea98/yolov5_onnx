@@ -20,6 +20,7 @@ class GlobalInfo:
         self.line_thickness = None
         self.names = None
         self.view_img = None
+        self.rm = None
 
         # 加载yml加载器
         self.configYaml = config(config_path)
