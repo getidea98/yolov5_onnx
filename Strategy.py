@@ -69,6 +69,8 @@ class Strategy:
         self.pre_door_index = 0
 
         self.pre_press_next_time = -1
+        # 上次因为找不到标签而移动的时间点
+        self.pre_nothing_move_time = -1
 
     def set_detect_result(self, det, im0s, im):
         self.det = det
@@ -111,7 +113,7 @@ class Strategy:
                 # 继续下个地下城
                 if "options" in cls_object:
                     self.select_next_time()
-                    return
+                    continue
 
                 if hero_index == -1:
                     # 没找到角色
@@ -303,11 +305,17 @@ class Strategy:
 
     # 没有检测到其他标签
     def nothing(self):
-        log.info('房间号:{}, 当前按键:{}, 没有检测到其他标签, 向{}移动'.format(self.door_index, self.action_cache,
-                                                                               self.not_found_role_direct))
-        self.action_cache = move(direct='RIGHT_UP', action_cache=self.action_cache,
-                                 press_delay=self.press_delay,
-                                 release_delay=self.release_delay)
+        # 减少频率，目的是避免检测准确率不高导致影响顺图和捡材料
+        if time.time() - self.pre_nothing_move_time > 2:
+            log.info('房间号:{}, 当前按键:{}, 没有检测到其他标签, 向{}移动'
+                     .format(self.door_index, self.action_cache, 'RIGHT_UP'))
+            self.action_cache = move(direct='RIGHT_UP', action_cache=self.action_cache,
+                                     press_delay=self.press_delay,
+                                     release_delay=self.release_delay)
+            # 移动1S后释放
+            time.sleep(1)
+            self.release_action_cache()
+            self.pre_nothing_move_time = time.time()
 
     # 没找到人物
     def not_found_role(self):
